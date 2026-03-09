@@ -10,7 +10,6 @@ exports.handler = async function(event) {
 
   console.log('Attempting to subscribe:', email);
 
-  // Try the subscribers endpoint directly instead of the form endpoint
   const response = await fetch('https://api.kit.com/v4/subscribers', {
     method: 'POST',
     headers: {
@@ -19,7 +18,7 @@ exports.handler = async function(event) {
     },
     body: JSON.stringify({ 
       email_address: email,
-      fields: {}
+      skip_email_confirmation: true
     })
   });
 
