@@ -10,13 +10,17 @@ exports.handler = async function(event) {
 
   console.log('Attempting to subscribe:', email);
 
-  const response = await fetch('https://api.kit.com/v4/forms/9181918/subscribers', {
+  // Try the subscribers endpoint directly instead of the form endpoint
+  const response = await fetch('https://api.kit.com/v4/subscribers', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       'X-Kit-Api-Key': process.env.KIT_API_KEY
     },
-    body: JSON.stringify({ email_address: email })
+    body: JSON.stringify({ 
+      email_address: email,
+      fields: {}
+    })
   });
 
   const data = await response.json();
