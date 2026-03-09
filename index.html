@@ -591,14 +591,11 @@
       btn.textContent = '...';
       btn.disabled = true;
 
-      fetch('https://api.convertkit.com/v3/forms/2b74c96e33/subscribe', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json; charset=utf-8' },
-        body: JSON.stringify({
-          api_key: 'c6bOT2iTJ2BJjxrfeOlXHw',
-          email: email
-        })
-      })
+     fetch('/.netlify/functions/subscribe', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ email: email })
+})
       .then(r => r.json())
       .then(data => {
         input.value = '';
