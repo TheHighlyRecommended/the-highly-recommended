@@ -8,15 +8,26 @@ exports.handler = async function (event) {
     const email = params.get('email');
     const firstName = params.get('first_name');
 
+    console.log('Received signup:', email, firstName);
+
     if (!email) {
+      console.log('No email provided');
       return { statusCode: 400, body: JSON.stringify({ error: 'Email is required' }) };
     }
+
+    const apiKey = process.env.MAILERLITE_API_KEY;
+    if (!apiKey) {
+      console.log('ERROR: MAILERLITE_API_KEY env variable not set');
+      return { statusCode: 500, body: JSON.stringify({ error: 'API key not configured' }) };
+    }
+
+    console.log('Sending to MailerLite...');
 
     const response = await fetch('https://connect.mailerlite.com/api/subscribers', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${process.env.MAILERLITE_API_KEY}`,
+        'Authorization': `Bearer ${apiKey}`,
         'Accept': 'application/json',
       },
       body: JSON.stringify({
@@ -28,16 +39,18 @@ exports.handler = async function (event) {
       }),
     });
 
+    const responseText = await response.text();
+    console.log('MailerLite response status:', response.status);
+    console.log('MailerLite response body:', responseText);
+
     if (!response.ok) {
-      const error = await response.text();
-      console.error('MailerLite error:', error);
       return { statusCode: 500, body: JSON.stringify({ error: 'Failed to subscribe' }) };
     }
 
     return { statusCode: 200, body: JSON.stringify({ success: true }) };
 
   } catch (err) {
-    console.error('Function error:', err);
+    console.log('Function error:', err.message);
     return { statusCode: 500, body: JSON.stringify({ error: 'Server error' }) };
   }
 };
