@@ -545,11 +545,11 @@
     <h3 class="email-headline reveal">Episode 1<br/>drops soon.</h3>
     <p class="email-sub reveal">Get notified when we go live.</p>
 
-    <form class="email-form" name="notify" method="POST" onsubmit="handleSubmit(event)">
+    <form class="email-form" name="notify" onsubmit="handleSubmit(event); return false;">
       <input class="name-input" type="text" id="nameInput" name="first_name" placeholder="your first name" autocomplete="given-name" />
       <div class="email-row">
         <input class="email-input" type="email" id="emailInput" name="email" placeholder="your@email.com" autocomplete="email" />
-        <button class="email-btn" type="submit">Notify me</button>
+        <button class="email-btn" type="button" onclick="handleSubmit(event)">Notify me</button>
       </div>
     </form>
     <p class="email-note reveal">No spam. Just the drop.</p>
@@ -584,10 +584,10 @@
   <!-- FOOTER -->
   <footer>
     <p>© 2026 <a href="https://teaspoonproductions.com">Teaspoon Productions, LLC</a></p>
-    <p><a href="mailto:hello@thehighlyrecommended.com" style="color:var(--neon);text-decoration:none;">hello@thehighlyrecommended.com</a></p>
+    <p><a href="/cdn-cgi/l/email-protection#2f474a4343406f5b474a4746484743565d4a4c4042424a414b4a4b014c4042" style="color:var(--neon);text-decoration:none;"><span class="__cf_email__" data-cfemail="4f272a2323200f3b272a2726282723363d2a2c2022222a212b2a2b612c2022">[email&#160;protected]</span></a></p>
   </footer>
 
-  <script>
+  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
     // Scroll reveal
     const observer = new IntersectionObserver(entries => {
       entries.forEach((entry) => {
@@ -600,7 +600,7 @@
 
     // Form submit — Netlify native form
     function handleSubmit(e) {
-      e.preventDefault();
+      if (e && e.preventDefault) e.preventDefault();
       const form = e.target;
       const nameInput = document.getElementById('nameInput');
       const emailInput = document.getElementById('emailInput');
@@ -635,14 +635,3 @@
         btn.textContent = '✓';
         btn.disabled = false;
         msg.style.display = 'block';
-        setTimeout(() => { btn.textContent = 'Notify me'; }, 3000);
-      })
-      .catch(() => {
-        btn.textContent = 'Notify me';
-        btn.disabled = false;
-        alert('Something went wrong. Please try again.');
-      });
-    }
-  </script>
-</body>
-</html>
