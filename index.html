@@ -601,10 +601,9 @@
     // Form submit — Netlify native form
     function handleSubmit(e) {
       if (e && e.preventDefault) e.preventDefault();
-      const form = e.target;
       const nameInput = document.getElementById('nameInput');
       const emailInput = document.getElementById('emailInput');
-      const btn = form.querySelector('.email-btn');
+      const btn = document.querySelector('.email-btn');
       const msg = document.getElementById('successMsg');
       const email = emailInput.value.trim();
       const name = nameInput.value.trim();
