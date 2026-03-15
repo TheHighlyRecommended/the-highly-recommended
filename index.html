@@ -99,8 +99,8 @@
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      width: 700px; height: 400px;
-      background: radial-gradient(ellipse at center, rgba(30, 136, 229, 0.18) 0%, transparent 70%);
+      width: 900px; height: 500px;
+      background: radial-gradient(ellipse at center, rgba(30, 136, 229, 0.35) 0%, rgba(13, 71, 161, 0.15) 50%, transparent 75%);
       pointer-events: none;
       animation: breathe 5s ease-in-out infinite;
     }
@@ -124,13 +124,17 @@
       text-align: center;
       opacity: 0;
       animation: fadeUp 1s ease 0.6s forwards;
+      position: relative;
     }
 
     .logo-wrap img {
       width: min(680px, 90vw);
-      filter: drop-shadow(0 0 40px rgba(79, 195, 247, 0.5)) drop-shadow(0 0 80px rgba(30, 136, 229, 0.3));
       position: relative;
       z-index: 1;
+      box-shadow:
+        0 0 40px 20px rgba(30, 136, 229, 0.6),
+        0 0 80px 40px rgba(30, 136, 229, 0.3),
+        0 0 120px 60px rgba(13, 71, 161, 0.15);
     }
 
     .hero-tagline {
@@ -304,8 +308,31 @@
 
     .email-form {
       display: flex;
-      gap: 0;
+      flex-direction: column;
+      gap: 0.75rem;
       max-width: 500px;
+    }
+
+    .email-row {
+      display: flex;
+      gap: 0;
+    }
+
+    .name-input {
+      width: 100%;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(79,195,247,0.25);
+      color: var(--white);
+      font-family: 'DM Mono', monospace;
+      font-size: 0.8rem;
+      padding: 1rem 1.25rem;
+      outline: none;
+      transition: border-color 0.2s, background 0.2s;
+    }
+    .name-input::placeholder { color: var(--text-dim); }
+    .name-input:focus {
+      border-color: var(--neon);
+      background: rgba(79,195,247,0.06);
     }
 
     .email-input {
@@ -370,12 +397,12 @@
       z-index: 1;
       max-width: 860px;
       margin: 0 auto;
-      padding: 0 2rem 6rem;
+      padding: 4rem 2rem 6rem;
       display: flex;
       align-items: center;
-      gap: 2rem;
+      gap: 1.5rem;
       flex-wrap: nowrap;
-      padding-top: 4rem;
+      overflow-x: auto;
     }
 
     .social-label {
@@ -414,7 +441,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      flex-wrap: nowrap;
+      flex-wrap: wrap;
       gap: 1rem;
     }
 
@@ -445,10 +472,11 @@
     }
 
     @media (max-width: 600px) {
-      .email-form { flex-direction: column; }
+      .email-row { flex-direction: column; }
       .email-input { border-right: 1px solid rgba(79,195,247,0.25); border-bottom: none; clip-path: none; }
-      .email-btn { clip-path: none; }
+      .email-btn { clip-path: none; width: 100%; }
       .about-headline { font-size: 2.8rem; }
+      .social-row { gap: 1rem; }
     }
   </style>
 </head>
@@ -517,10 +545,14 @@
     <h3 class="email-headline reveal">Episode 1<br/>drops soon.</h3>
     <p class="email-sub reveal">Get notified when we go live.</p>
 
-    <div class="email-form">
-      <input class="email-input" type="email" id="emailInput" placeholder="your@email.com" />
-      <button class="email-btn" onclick="handleSubmit()">Notify me</button>
-    </div>
+    <form class="email-form" name="notify" method="POST" data-netlify="true" onsubmit="handleSubmit(event)">
+      <input type="hidden" name="form-name" value="notify" />
+      <input class="name-input" type="text" id="nameInput" name="first_name" placeholder="your first name" autocomplete="given-name" />
+      <div class="email-row">
+        <input class="email-input" type="email" id="emailInput" name="email" placeholder="your@email.com" autocomplete="email" />
+        <button class="email-btn" type="submit">Notify me</button>
+      </div>
+    </form>
     <p class="email-note reveal">No spam. Just the drop.</p>
     <p class="success-msg" id="successMsg">✦ You're on the list. See you on the other side.</p>
   </section>
@@ -556,18 +588,10 @@
     <p><a href="mailto:hello@thehighlyrecommended.com" style="color:var(--neon);text-decoration:none;">hello@thehighlyrecommended.com</a></p>
   </footer>
 
-  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
-    const cursor = document.getElementById('cursor');
-    if (cursor) {
-      document.querySelectorAll('a, button, input').forEach(el => {
-        el.addEventListener('mouseenter', () => cursor.classList.add('hovered'));
-        el.addEventListener('mouseleave', () => cursor.classList.remove('hovered'));
-      });
-    }
-
+  <script>
     // Scroll reveal
     const observer = new IntersectionObserver(entries => {
-      entries.forEach((entry, i) => {
+      entries.forEach((entry) => {
         if (entry.isIntersecting) {
           setTimeout(() => entry.target.classList.add('visible'), 100);
         }
@@ -575,41 +599,49 @@
     }, { threshold: 0.15 });
     document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
-    // Email submit — Kit v3 API with public API key
-    function handleSubmit() {
-      const input = document.getElementById('emailInput');
-      const btn = document.querySelector('.email-btn');
+    // Form submit — Netlify native form
+    function handleSubmit(e) {
+      e.preventDefault();
+      const form = e.target;
+      const nameInput = document.getElementById('nameInput');
+      const emailInput = document.getElementById('emailInput');
+      const btn = form.querySelector('.email-btn');
       const msg = document.getElementById('successMsg');
-      const email = input.value.trim();
+      const email = emailInput.value.trim();
+      const name = nameInput.value.trim();
 
+      if (!name) {
+        nameInput.style.borderColor = '#ff4444';
+        setTimeout(() => nameInput.style.borderColor = '', 1500);
+        return;
+      }
       if (!email || !email.includes('@')) {
-        input.style.borderColor = '#ff4444';
-        setTimeout(() => input.style.borderColor = '', 1500);
+        emailInput.style.borderColor = '#ff4444';
+        setTimeout(() => emailInput.style.borderColor = '', 1500);
         return;
       }
 
       btn.textContent = '...';
       btn.disabled = true;
 
-     fetch('/.netlify/functions/subscribe', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({ email: email })
-})
-      .then(r => r.json())
-      .then(data => {
-        input.value = '';
+      const formData = new FormData(form);
+      fetch('/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams(formData).toString()
+      })
+      .then(() => {
+        nameInput.value = '';
+        emailInput.value = '';
         btn.textContent = '✓';
         btn.disabled = false;
         msg.style.display = 'block';
         setTimeout(() => { btn.textContent = 'Notify me'; }, 3000);
       })
-      .catch(err => {
-        console.error('Kit error:', err);
+      .catch(() => {
         btn.textContent = 'Notify me';
         btn.disabled = false;
-        input.style.borderColor = '#ff4444';
-        setTimeout(() => input.style.borderColor = '', 1500);
+        alert('Something went wrong. Please try again.');
       });
     }
   </script>
