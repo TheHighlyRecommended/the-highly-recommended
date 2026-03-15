@@ -545,8 +545,7 @@
     <h3 class="email-headline reveal">Episode 1<br/>drops soon.</h3>
     <p class="email-sub reveal">Get notified when we go live.</p>
 
-    <form class="email-form" name="notify" method="POST" data-netlify="true" onsubmit="handleSubmit(event)">
-      <input type="hidden" name="form-name" value="notify" />
+    <form class="email-form" name="notify" method="POST" onsubmit="handleSubmit(event)">
       <input class="name-input" type="text" id="nameInput" name="first_name" placeholder="your first name" autocomplete="given-name" />
       <div class="email-row">
         <input class="email-input" type="email" id="emailInput" name="email" placeholder="your@email.com" autocomplete="email" />
@@ -588,7 +587,7 @@
     <p><a href="mailto:hello@thehighlyrecommended.com" style="color:var(--neon);text-decoration:none;">hello@thehighlyrecommended.com</a></p>
   </footer>
 
-  <script>
+  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
     // Scroll reveal
     const observer = new IntersectionObserver(entries => {
       entries.forEach((entry) => {
@@ -625,7 +624,7 @@
       btn.disabled = true;
 
       const formData = new FormData(form);
-      fetch('/', {
+      fetch('/.netlify/functions/subscribe', {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         body: new URLSearchParams(formData).toString()
@@ -636,14 +635,3 @@
         btn.textContent = '✓';
         btn.disabled = false;
         msg.style.display = 'block';
-        setTimeout(() => { btn.textContent = 'Notify me'; }, 3000);
-      })
-      .catch(() => {
-        btn.textContent = 'Notify me';
-        btn.disabled = false;
-        alert('Something went wrong. Please try again.');
-      });
-    }
-  </script>
-</body>
-</html>
