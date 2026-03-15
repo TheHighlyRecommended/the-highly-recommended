@@ -4,24 +4,19 @@ exports.handler = async function (event) {
   }
 
   try {
-    const params = new URLSearchParams(event.body);
-    const email = params.get('email');
-    const firstName = params.get('first_name');
+    const { email, first_name } = JSON.parse(event.body);
 
-    console.log('Received signup:', email, firstName);
+    console.log('Received signup:', email, first_name);
 
     if (!email) {
-      console.log('No email provided');
       return { statusCode: 400, body: JSON.stringify({ error: 'Email is required' }) };
     }
 
     const apiKey = process.env.MAILERLITE_API_KEY;
     if (!apiKey) {
-      console.log('ERROR: MAILERLITE_API_KEY env variable not set');
+      console.log('ERROR: MAILERLITE_API_KEY not set');
       return { statusCode: 500, body: JSON.stringify({ error: 'API key not configured' }) };
     }
-
-    console.log('Sending to MailerLite...');
 
     const response = await fetch('https://connect.mailerlite.com/api/subscribers', {
       method: 'POST',
@@ -32,16 +27,14 @@ exports.handler = async function (event) {
       },
       body: JSON.stringify({
         email: email,
-        fields: {
-          name: firstName || '',
-        },
+        fields: { name: first_name || '' },
         groups: ['181352064527370192'],
       }),
     });
 
     const responseText = await response.text();
-    console.log('MailerLite response status:', response.status);
-    console.log('MailerLite response body:', responseText);
+    console.log('MailerLite status:', response.status);
+    console.log('MailerLite response:', responseText);
 
     if (!response.ok) {
       return { statusCode: 500, body: JSON.stringify({ error: 'Failed to subscribe' }) };
@@ -50,7 +43,7 @@ exports.handler = async function (event) {
     return { statusCode: 200, body: JSON.stringify({ success: true }) };
 
   } catch (err) {
-    console.log('Function error:', err.message);
+    console.log('Error:', err.message);
     return { statusCode: 500, body: JSON.stringify({ error: 'Server error' }) };
   }
 };
