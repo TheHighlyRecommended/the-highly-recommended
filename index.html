@@ -563,7 +563,7 @@
     <h3 class="email-headline reveal">Episode 1<br/>drops soon.</h3>
     <p class="email-sub reveal">Get notified when we go live.</p>
 
-    <form class="email-form" id="signupForm">
+    <form class="email-form" onsubmit="handleSubmit(event); return false;">
       <!-- Honeypot: invisible to humans, bots fill it and get silently rejected -->
       <input class="ohnohoney" type="text" name="website" autocomplete="off" tabindex="-1" />
       <input class="name-input" type="text" id="nameInput" name="first_name" placeholder="your first name" autocomplete="given-name" />
@@ -610,12 +610,6 @@
     <script>
     // Track page load time for timing-based bot detection
     const _formLoadTime = Date.now();
-
-    // Wire up form submit in JS (more reliable than onsubmit attribute)
-    document.addEventListener('DOMContentLoaded', function() {
-      var form = document.getElementById('signupForm');
-      if (form) form.addEventListener('submit', function(e) { e.preventDefault(); handleSubmit(e); });
-    });
 
     // Scroll reveal
     const observer = new IntersectionObserver(entries => {
@@ -664,4 +658,23 @@
       fetch('/.netlify/functions/subscribe', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSO
+        body: JSON.stringify({ email: email, first_name: name })
+      })
+      .then(r => r.json())
+      .then(() => {
+        nameInput.value = '';
+        emailInput.value = '';
+        btn.textContent = '✓';
+        btn.disabled = false;
+        msg.style.display = 'block';
+        setTimeout(() => { btn.textContent = 'Notify me'; }, 3000);
+      })
+      .catch(() => {
+        btn.textContent = 'Notify me';
+        btn.disabled = false;
+        alert('Something went wrong. Please try again.');
+      });
+    }
+  </script>
+</body>
+</html>
