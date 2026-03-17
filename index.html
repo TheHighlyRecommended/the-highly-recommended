@@ -4,6 +4,15 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>The Highly Recommended</title>
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://thehighlyrecommended.com" />
+  <meta property="og:title" content="The Highly Recommended" />
+  <meta property="og:description" content="Stories of People Worth Knowing. A podcast hosted by Becky Perry — coming soon." />
+  <meta property="og:image" content="https://raw.githubusercontent.com/TheHighlyRecommended/the-highly-recommended/main/59F133EA-6A15-4B02-A411-424C95823DB1%202.PNG" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:image" content="https://raw.githubusercontent.com/TheHighlyRecommended/the-highly-recommended/main/59F133EA-6A15-4B02-A411-424C95823DB1%202.PNG" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Crimson+Pro:ital,wght@0,300;0,400;1,300;1,400&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet" />
@@ -598,7 +607,7 @@
     <p><a href="mailto:hello@thehighlyrecommended.com" style="color:var(--neon);text-decoration:none;">hello@thehighlyrecommended.com</a></p>
   </footer>
 
-    <script>
+    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
     // Track page load time for timing-based bot detection
     const _formLoadTime = Date.now();
 
@@ -658,14 +667,3 @@
         btn.textContent = '✓';
         btn.disabled = false;
         msg.style.display = 'block';
-        setTimeout(() => { btn.textContent = 'Notify me'; }, 3000);
-      })
-      .catch(() => {
-        btn.textContent = 'Notify me';
-        btn.disabled = false;
-        alert('Something went wrong. Please try again.');
-      });
-    }
-  </script>
-</body>
-</html>
