@@ -607,7 +607,7 @@
     <p><a href="mailto:hello@thehighlyrecommended.com" style="color:var(--neon);text-decoration:none;">hello@thehighlyrecommended.com</a></p>
   </footer>
 
-    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+  <script>
     // Track page load time for timing-based bot detection
     const _formLoadTime = Date.now();
 
@@ -658,12 +658,4 @@
       fetch('/.netlify/functions/subscribe', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: email, first_name: name })
-      })
-      .then(r => r.json())
-      .then(() => {
-        nameInput.value = '';
-        emailInput.value = '';
-        btn.textContent = '✓';
-        btn.disabled = false;
-        msg.style.display = 'block';
+        body: JSON.st
